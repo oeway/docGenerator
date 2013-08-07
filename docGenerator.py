@@ -5,15 +5,16 @@
     
     
     input file sample:
-    *|[Section 1]|:
+    ====Section 1====
+        root
         content
-        *|2[heading 1]|
+        ----heading 1----
          content
-        *|2[heading 1]|
+        -----heading 1----
          content
          content
-    *|[Section 2]|:  
-    *|[end]|:
+    ====Section 2==== 
+    ====end====
     
 '''
 ######First, parse the input file
@@ -21,12 +22,19 @@ import re
 import shutil
 import os
 import jinja2
+import zipfile
 
-inputFile = 'testdoc.txt'
+inputFile = './Input/testdoc.txt'
 numberedSection = {'权利要求书':'。',
-                    '说明书':'\n',
-                    '说明书附图':'\n'}
+                    '说明书':'。\n',
+                    '说明书附图':'\n',
+                    '其他发明人':'\n',
+                    '其他申请人':'\n'}
 
+imageSectionPath = {'说明书附图':'100003',
+                '摘要附图':'100005'}
+
+imageNameBase = '1308041747'
 s = open(inputFile,encoding='utf-8').readlines()
 m = re.findall(r'==(.+?)====\n(.+?)\n==',"".join(s),flags=re.DOTALL)
 d = {key.strip().replace('=',''):val.strip() for key, val in m if key.strip()!= '' or val.strip()!=""}
@@ -51,30 +59,51 @@ for k in numberedSection.keys():
                     #print(m.groups(0))
                     # if m.groups(0)[1].strip() != "":
                     #     i +=1
-                    #     ns[k].append( (i, m.groups(0)[1].strip()+v) )
+                    #     ns[k].append( {'index':i,'type':'text', 'value':m.groups(0)[1].strip()+v} )
                 continue
             except:
                 pass
             if heading != '':
                 if heading in ns[k]:
                     i +=1
-                    ns[k][heading].append((i, line.strip()+v))
-
+                    ns[k][heading].append({'index':i,'type':'text','content':line.strip()+v})
 d['numberedSection'] = ns
-#print(ns)
+
 #######Make work directory
-templateFileList = []
 try:
-    shutil.rmtree("./output") 
+    shutil.rmtree("./Output") 
 except:
     print('Delete template directory failed!')
-    exit()
 try:
-    shutil.copytree("./Template","./output")
+    shutil.copytree("./Template","./Output")
 except:
     print('Copy template directory failed')
     exit()
-for dirpath, dirnames, filenames in os.walk('./output'):
+
+imageIndex = 0        
+for sec in imageSectionPath.keys():
+    images = d[sec].split('\n')
+    imgLst = []
+    for img in images:
+        imageIndex +=10
+        fileName, fileExtension = os.path.splitext(img)
+        imgName = imageNameBase + str(imageIndex)+fileExtension
+        imgDict = {}
+        imgDict['type'] = 'image'
+        imgDict['img-format'] = fileExtension.strip('.')
+        imgDict['width'] = 102
+        imgDict['content'] = imgName
+        if sec in d:
+            d[sec] = imgName
+        imgLst.append(imgDict)
+        shutil.copy (os.path.join('Input',img),  os.path.join('Output',imageSectionPath[sec],imgName))
+        if os.path.isfile (os.path.join('Output',imageSectionPath[sec],imgName)): print("Copy File Success")
+    if sec in d['numberedSection']:
+        d['numberedSection'][sec]['root'] = imgLst
+
+templateFileList = []
+
+for dirpath, dirnames, filenames in os.walk('./Output'):
     for filename in filenames:
         fullpath = os.path.join(dirpath,filename)
         if '.xml' in filename:
@@ -91,3 +120,27 @@ for dirpath, TEMPLATE_FILE in templateFileList:
     f.write(outputText)
     f.close() 
     print(TEMPLATE_FILE + '  done!')
+
+
+#######Make Archive
+
+def toZip( file, filename):
+    zip_file = zipfile.ZipFile(filename, 'w')
+    if os.path.isfile(file):
+        zip_file.write(file)
+    else:
+        addFolderToZip(zip_file, file)
+    zip_file.close()
+
+def addFolderToZip( zip_file, folder): 
+    for file in os.listdir(folder):
+        full_path = os.path.join(folder, file)
+        if os.path.isfile(full_path):
+            print('File added: ' + str(full_path))
+            zip_file.write(full_path)
+        elif os.path.isdir(full_path):
+            print ('Entering folder: ' + str(full_path))
+            addFolderToZip(zip_file, full_path)
+filename = 'Output.zip'
+directory = 'Output'
+toZip(directory, filename)
