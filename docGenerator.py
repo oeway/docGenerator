@@ -24,7 +24,8 @@ import jinja2
 
 inputFile = 'testdoc.txt'
 numberedSection = {'权利要求书':'。',
-                    '说明书':'\n'}
+                    '说明书':'\n',
+                    '说明书附图':'\n'}
 
 s = open(inputFile,encoding='utf-8').readlines()
 m = re.findall(r'==(.+?)====\n(.+?)\n==',"".join(s),flags=re.DOTALL)
@@ -36,35 +37,44 @@ for k in numberedSection.keys():
     if k in d:
         #ns[k] =[(i,line.strip()+ v) for i,line in enumerate(d[k].split(v)) if line.strip() != '' ]
         i = 0
-        ns[k] = []
+        ns[k] = {}
+        heading = "root"
+        ns[k][heading] = []
         for line in d[k].split(v):
             if line.strip() == '':
                 continue
-            m = re.match(r'----(.+?)----',line)
+            m = re.match(r'----(.+?)----',line,flags=re.DOTALL)
             try:
                 if len(m.groups(0)) > 0:
                     heading = m.groups(0)[0].strip()
-                    ns[k].append(('#',heading))
+                    ns[k][heading] = []
+                    #print(m.groups(0))
+                    # if m.groups(0)[1].strip() != "":
+                    #     i +=1
+                    #     ns[k].append( (i, m.groups(0)[1].strip()+v) )
                 continue
             except:
                 pass
-            i +=1
-            ns[k].append( (str(i), line.strip()) )
+            if heading != '':
+                if heading in ns[k]:
+                    i +=1
+                    ns[k][heading].append((i, line.strip()+v))
+
 d['numberedSection'] = ns
-print(d)
+#print(ns)
 #######Make work directory
 templateFileList = []
 try:
-    shutil.rmtree("./tmp") 
+    shutil.rmtree("./output") 
 except:
     print('Delete template directory failed!')
     exit()
 try:
-    shutil.copytree("./Template","./tmp")
+    shutil.copytree("./Template","./output")
 except:
     print('Copy template directory failed')
     exit()
-for dirpath, dirnames, filenames in os.walk('./tmp'):
+for dirpath, dirnames, filenames in os.walk('./output'):
     for filename in filenames:
         fullpath = os.path.join(dirpath,filename)
         if '.xml' in filename:
