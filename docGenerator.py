@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 '''
+    Copyright (C) 2013 - oeway007@gmail.com
+
     generate xml file with jinja2 from input text file with predefined mark.
-    
+    Originally used for Chinese patent archive.
     
     input file sample:
     ====Section 1====
@@ -24,10 +26,12 @@ import os
 import jinja2
 import zipfile
 
-inputFile = './Input/testdoc.txt'
+imageWidth = 160
+inputFile = './Input/inputDoc.txt'
 numberedSection = {'权利要求书':'。',
-                    '说明书':'。\n',
+                    '说明书':'。',
                     '说明书附图':'\n',
+                    '摘要附图':'\n',
                     '其他发明人':'\n',
                     '其他申请人':'\n'}
 
@@ -48,7 +52,8 @@ for k in numberedSection.keys():
         ns[k] = {}
         heading = "root"
         ns[k][heading] = []
-        for line in d[k].split(v):
+        lineClosed = True
+        for line in d[k].split('\n'):
             if line.strip() == '':
                 continue
             m = re.match(r'----(.+?)----',line,flags=re.DOTALL)
@@ -65,8 +70,12 @@ for k in numberedSection.keys():
                 pass
             if heading != '':
                 if heading in ns[k]:
-                    i +=1
-                    ns[k][heading].append({'index':i,'type':'text','content':line.strip()+v})
+                    if lineClosed:
+                        i +=1
+                        ns[k][heading].append({'index':i,'type':'text','content':line.strip()})
+                    else:
+                        ns[k][heading].append({'index':-1,'type':'text','content':line.strip()})
+                    lineClosed = line.strip()[-1] == v
 d['numberedSection'] = ns
 
 #######Make work directory
@@ -80,27 +89,36 @@ except:
     print('Copy template directory failed')
     exit()
 
+######Process image file
+from PIL import Image
 imageIndex = 0        
 for sec in imageSectionPath.keys():
     images = d[sec].split('\n')
     imgLst = []
-    for img in images:
+    for i,img in enumerate(images):
         imageIndex +=10
         fileName, fileExtension = os.path.splitext(img)
         imgName = imageNameBase + str(imageIndex)+fileExtension
         imgDict = {}
+        if sec in d['numberedSection']:
+            imgDict = d['numberedSection'][sec]['root'][i]
         imgDict['type'] = 'image'
         imgDict['img-format'] = fileExtension.strip('.')
-        imgDict['width'] = 102
+        im = Image.open(os.path.join('Input',img))
+        imgDict['width'] = imageWidth
+        imgDict['height'] = int(1.0*im.size[1]*imgDict['width']/im.size[0])
+        #print(im.size)
         imgDict['content'] = imgName
         if sec in d:
             d[sec] = imgName
         imgLst.append(imgDict)
         shutil.copy (os.path.join('Input',img),  os.path.join('Output',imageSectionPath[sec],imgName))
         if os.path.isfile (os.path.join('Output',imageSectionPath[sec],imgName)): print("Copy File Success")
+
+
     if sec in d['numberedSection']:
         d['numberedSection'][sec]['root'] = imgLst
-
+        #print(imgLst)
 templateFileList = []
 
 for dirpath, dirnames, filenames in os.walk('./Output'):
@@ -141,6 +159,7 @@ def addFolderToZip( zip_file, folder):
         elif os.path.isdir(full_path):
             print ('Entering folder: ' + str(full_path))
             addFolderToZip(zip_file, full_path)
-filename = 'Output.zip'
+filename = d['发明名称']+'.zip'
 directory = 'Output'
 toZip(directory, filename)
+print('Done!')
