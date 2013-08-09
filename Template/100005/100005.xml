@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE  cn-application-body SYSTEM "/dtdandxsl/cn-application-body-20080416.dtd">
+<cn-application-body lang="zh" country="CN">
+<cn-abstract>
+	<cn-abst-figure>
+		{% for line in numberedSection["摘要附图"]["root"] %}
+			<figure id="f{{line['index']}}" num="{{line['index']}}" figure-labels="图{{line['index']}}">
+				<img id="if{{line['index']}}" file="{{line['content']}}" wi="{{line["width"]}}" he="{{line["height"]}}" img-content="drawing" img-format="{{line['img-format']}}" orientation="portrait" inline="no"/>
+		</figure>
+		{% endfor %}
+	</cn-abst-figure>
+</cn-abstract></cn-application-body>

@@ -1,0 +1,11 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE  cn-application-body SYSTEM "/dtdandxsl/cn-application-body-20080416.dtd">
+<cn-application-body lang="zh" country="CN">
+<cn-claims>
+	{% if "权利要求书" in numberedSection%}
+		{% for line in numberedSection["权利要求书"]["root"] %}
+		<claim num="{{line['index']}}"><claim-text>{{line['content']}}</claim-text></claim>
+		{% endfor %}
+	{% endif %}
+</cn-claims>
+</cn-application-body>

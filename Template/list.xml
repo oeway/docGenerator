@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<data-bus>
+  <QINGQIUXX>
+    <DIANZISQAJID/>
+    <SHENQINGFS>0</SHENQINGFS>
+    <YEWULX>1</YEWULX>
+    <WENJIANLX>0</WENJIANLX>
+    <TIJIAORDM>
+    </TIJIAORDM>
+    <FAMINGMC>{{发明名称}}</FAMINGMC>
+    <SHENQINGH>
+    </SHENQINGH>
+    <WEINEIBH>
+    </WEINEIBH>
+    <GUOJISQH>
+    </GUOJISQH>
+    <NEIBUBH>
+    </NEIBUBH>
+    <BAOID>
+    </BAOID>
+  </QINGQIUXX>
+  <WENJIANBYSXX>
+    <BAOTOUXX>
+      <WENJIANBBZ>
+      </WENJIANBBZ>
+      <WENJIANGS>6</WENJIANGS>
+    </BAOTOUXX>
+    <BAONEIWJXX>
+      <WENJIANBZ>120101.xml</WENJIANBZ>
+      <GESHILX>.XML</GESHILX>
+      <BIAOGEDM>120101</BIAOGEDM>
+      <XIANGDUILJ>120101\120101.xml</XIANGDUILJ>
+      <DTDVersion>1.0</DTDVersion>
+      <PAGES>0</PAGES>
+      <COUNTS>0</COUNTS>
+      <SHIFOUBZ>0</SHIFOUBZ>
+      <WENJIANMC>{{专利类型}}专利请求书</WENJIANMC>
+      <ZHENGMINGYT>
+      </ZHENGMINGYT>
+    </BAONEIWJXX>
+    <BAONEIWJXX>
+      <WENJIANBZ>100002.xml</WENJIANBZ>
+      <GESHILX>.XML</GESHILX>
+      <BIAOGEDM>100002</BIAOGEDM>
+      <XIANGDUILJ>100002\100002.xml</XIANGDUILJ>
+      <DTDVersion>1.0</DTDVersion>
+      <PAGES>2</PAGES>
+      <COUNTS>0</COUNTS>
+      <SHIFOUBZ>0</SHIFOUBZ>
+      <WENJIANMC>说明书</WENJIANMC>
+      <ZHENGMINGYT>
+      </ZHENGMINGYT>
+    </BAONEIWJXX>
+  {% if "说明书附图" in numberedSection %}
+    <BAONEIWJXX>
+      <WENJIANBZ>100003.xml</WENJIANBZ>
+      <GESHILX>.XML</GESHILX>
+      <BIAOGEDM>100003</BIAOGEDM>
+      <XIANGDUILJ>100003\100003.xml</XIANGDUILJ>
+      <DTDVersion>1.0</DTDVersion>
+      <PAGES>1</PAGES>
+      <COUNTS>1</COUNTS>
+      <SHIFOUBZ>0</SHIFOUBZ>
+      <WENJIANMC>说明书附图</WENJIANMC>
+      <ZHENGMINGYT>
+      </ZHENGMINGYT>
+    </BAONEIWJXX>
+  {% endif %}
+    <BAONEIWJXX>
+      <WENJIANBZ>100004.xml</WENJIANBZ>
+      <GESHILX>.XML</GESHILX>
+      <BIAOGEDM>100004</BIAOGEDM>
+      <XIANGDUILJ>100004\100004.xml</XIANGDUILJ>
+      <DTDVersion>1.0</DTDVersion>
+      <PAGES>1</PAGES>
+      <COUNTS>0</COUNTS>
+      <SHIFOUBZ>0</SHIFOUBZ>
+      <WENJIANMC>说明书摘要</WENJIANMC>
+      <ZHENGMINGYT>
+      </ZHENGMINGYT>
+    </BAONEIWJXX>
+    {% if "摘要附图" in numberedSection%}
+    <BAONEIWJXX>
+      <WENJIANBZ>100005.xml</WENJIANBZ>
+      <GESHILX>.XML</GESHILX>
+      <BIAOGEDM>100005</BIAOGEDM>
+      <XIANGDUILJ>100005\100005.xml</XIANGDUILJ>
+      <DTDVersion>1.0</DTDVersion>
+      <PAGES>1</PAGES>
+      <COUNTS>0</COUNTS>
+      <SHIFOUBZ>0</SHIFOUBZ>
+      <WENJIANMC>摘要附图</WENJIANMC>
+      <ZHENGMINGYT>
+      </ZHENGMINGYT>
+    </BAONEIWJXX>
+    {% endif %}
+    <BAONEIWJXX>
+      <WENJIANBZ>100001.xml</WENJIANBZ>
+      <GESHILX>.XML</GESHILX>
+      <BIAOGEDM>100001</BIAOGEDM>
+      <XIANGDUILJ>100001\100001.xml</XIANGDUILJ>
+      <DTDVersion>1.0</DTDVersion>
+      <PAGES>1</PAGES>
+      <COUNTS> 
+        {% if "权利要求书" in numberedSection%}
+          {{numberedSection["权利要求书"]["root"]|length}}
+        {% else %}
+        {{0}}
+        {% endif %}
+      </COUNTS>
+      <SHIFOUBZ>0</SHIFOUBZ>
+      <WENJIANMC>权利要求书</WENJIANMC>
+      <ZHENGMINGYT>
+      </ZHENGMINGYT>
+    </BAONEIWJXX>
+  </WENJIANBYSXX>
+</data-bus>
