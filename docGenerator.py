@@ -40,9 +40,9 @@ imageSectionPath = {'说明书附图':'100003',
 
 imageNameBase = '1308041747'
 s = open(inputFile,encoding='utf-8').readlines()
-m = re.findall(r'==(.+?)====\n(.+?)\n==',"".join(s),flags=re.DOTALL)
+m = re.findall(r'==(.+?)====\n(.*?)==',"".join(s),flags=re.DOTALL)
 d = {key.strip().replace('=',''):val.strip() for key, val in m if key.strip()!= '' or val.strip()!=""}
-
+#print (d)
 ns = {}
 for k in numberedSection.keys():
     v = numberedSection[k]
@@ -76,8 +76,11 @@ for k in numberedSection.keys():
                     else:
                         ns[k][heading].append({'index':-1,'type':'text','content':line.strip()})
                     lineClosed = line.strip()[-1] == v
-d['numberedSection'] = ns
+import datetime
+da = datetime.date.today()
+d['日期'] = {"年":da.year,"月":da.month,"日":da.day}
 
+d['numberedSection'] = ns
 #######Make work directory
 try:
     shutil.rmtree("./Output") 
@@ -93,28 +96,33 @@ except:
 from PIL import Image
 imageIndex = 0        
 for sec in imageSectionPath.keys():
-    images = d[sec].split('\n')
+    try:
+        images = d[sec].split('\n')
+    except:
+        continue
     imgLst = []
     for i,img in enumerate(images):
-        imageIndex +=10
-        fileName, fileExtension = os.path.splitext(img)
-        imgName = imageNameBase + str(imageIndex)+fileExtension
-        imgDict = {}
-        if sec in d['numberedSection']:
-            imgDict = d['numberedSection'][sec]['root'][i]
-        imgDict['type'] = 'image'
-        imgDict['img-format'] = fileExtension.strip('.')
-        im = Image.open(os.path.join('Input',img))
-        imgDict['width'] = imageWidth
-        imgDict['height'] = int(1.0*im.size[1]*imgDict['width']/im.size[0])
-        #print(im.size)
-        imgDict['content'] = imgName
-        if sec in d:
-            d[sec] = imgName
-        imgLst.append(imgDict)
-        shutil.copy (os.path.join('Input',img),  os.path.join('Output',imageSectionPath[sec],imgName))
-        if os.path.isfile (os.path.join('Output',imageSectionPath[sec],imgName)): print("Copy File Success")
-
+        try:
+            imageIndex +=10
+            fileName, fileExtension = os.path.splitext(img)
+            imgName = imageNameBase + str(imageIndex)+fileExtension
+            imgDict = {}
+            if sec in d['numberedSection']:
+                imgDict = d['numberedSection'][sec]['root'][i]
+            imgDict['type'] = 'image'
+            imgDict['img-format'] = fileExtension.strip('.')
+            im = Image.open(os.path.join('Input',img))
+            imgDict['width'] = imageWidth
+            imgDict['height'] = int(1.0*im.size[1]*imgDict['width']/im.size[0])
+            #print(im.size)
+            imgDict['content'] = imgName
+            if sec in d:
+                d[sec] = imgName
+            imgLst.append(imgDict)
+            shutil.copy (os.path.join('Input',img),  os.path.join('Output',imageSectionPath[sec],imgName))
+            if os.path.isfile (os.path.join('Output',imageSectionPath[sec],imgName)): print("Copy File Success")
+        except:
+            pass
 
     if sec in d['numberedSection']:
         d['numberedSection'][sec]['root'] = imgLst
@@ -129,15 +137,19 @@ for dirpath, dirnames, filenames in os.walk('./Output'):
 
 #######Second, fill the template
 for dirpath, TEMPLATE_FILE in templateFileList:
-    templateLoader = jinja2.FileSystemLoader( searchpath= dirpath , encoding='utf-8')
-    templateEnv = jinja2.Environment( loader=templateLoader )
-    template = templateEnv.get_template( TEMPLATE_FILE)
-    outputText = template.render( d )
-#######Save output file
-    f=open(os.path.join(dirpath,TEMPLATE_FILE) ,'w',encoding='utf-8')
-    f.write(outputText)
-    f.close() 
-    print(TEMPLATE_FILE + '  done!')
+    try:
+        templateLoader = jinja2.FileSystemLoader( searchpath= dirpath , encoding='utf-8')
+        templateEnv = jinja2.Environment( loader=templateLoader )
+        template = templateEnv.get_template( TEMPLATE_FILE)
+        outputText = template.render( d )
+    #######Save output file
+        f=open(os.path.join(dirpath,TEMPLATE_FILE) ,'w',encoding='utf-8')
+        f.write(outputText)
+        f.close() 
+        print(TEMPLATE_FILE + '  done!')
+    except:
+        os.remove(os.path.join(dirpath,TEMPLATE_FILE))
+        print("Error when process " + TEMPLATE_FILE)
 
 
 #######Make Archive
