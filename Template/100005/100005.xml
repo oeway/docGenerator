@@ -3,7 +3,7 @@
 <cn-application-body lang="zh" country="CN">
 <cn-abstract>
 	<cn-abst-figure>
-		{% for line in numberedSection["摘要附图"]["root"] %}
+		{% for line in 摘要附图 %}
 			<figure id="f{{line['index']}}" num="{{line['index']}}" figure-labels="图{{line['index']}}">
 				<img id="if{{line['index']}}" file="{{line['content']}}" wi="{{line["width"]}}" he="{{line["height"]}}" img-content="drawing" img-format="{{line['img-format']}}" orientation="portrait" inline="no"/>
 		</figure>

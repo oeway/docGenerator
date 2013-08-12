@@ -7,7 +7,7 @@
     <WENJIANLX>0</WENJIANLX>
     <TIJIAORDM>
     </TIJIAORDM>
-    <FAMINGMC>{{发明名称}}</FAMINGMC>
+    <FAMINGMC>{{专利名称}}</FAMINGMC>
     <SHENQINGH>
     </SHENQINGH>
     <WEINEIBH>
@@ -101,13 +101,7 @@
       <XIANGDUILJ>100001\100001.xml</XIANGDUILJ>
       <DTDVersion>1.0</DTDVersion>
       <PAGES>1</PAGES>
-      <COUNTS> 
-        {% if "权利要求书" in numberedSection%}
-          {{numberedSection["权利要求书"]["root"]|length}}
-        {% else %}
-        {{0}}
-        {% endif %}
-      </COUNTS>
+      <COUNTS> {{权利要求项数}}</COUNTS>
       <SHIFOUBZ>0</SHIFOUBZ>
       <WENJIANMC>权利要求书</WENJIANMC>
       <ZHENGMINGYT>

@@ -2,66 +2,58 @@
 <!DOCTYPE  cn-application-body SYSTEM "/dtdandxsl/cn-application-body-20080416.dtd">
 <cn-application-body lang="zh" country="CN">
 	<description>
-	<invention-title><b>{{发明名称}}</b></invention-title>
+	<invention-title><b>{{说明书[0]}}</b></invention-title>
 	<technical-field>
 		<heading>技术领域</heading>
-		{% if "技术领域" in numberedSection["说明书"] %}
-			{% for line in numberedSection["说明书"]["技术领域"] %}
-				{% if line['index']<0 %}
-					<p Italic="0" num="XXXX">{{line['content']}}</p>
-				{% else %}
-				    <p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
-				{% endif %}
-			{% endfor %}
-		{% endif %}
+		{% for line in 技术领域 %}
+			{% if line['index']<0 %}
+				<p Italic="0" num="XXXX">{{line['content']}}</p>
+			{% else %}
+				<p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
+			{% endif %}
+		{% endfor %}
 	</technical-field>
 	<background-art>
 		<heading>背景技术</heading>
-		{% if "背景技术" in numberedSection["说明书"] %}
-			{% for line in numberedSection["说明书"]["背景技术"] %}
-				{% if line['index']<0 %}
-					<p Italic="0" num="XXXX">{{line['content']}}</p>
-				{% else %}
-				    <p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
-				{% endif %}
-			{% endfor %}
-		{% endif %}
+		{% for line in 背景技术 %}
+			{% if line['index']<0 %}
+				<p Italic="0" num="XXXX">{{line['content']}}</p>
+			{% else %}
+				<p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
+			{% endif %}
+		{% endfor %}
 	</background-art>
 	<disclosure>
 		<heading>发明内容</heading>
-		{% if "发明内容" in numberedSection["说明书"] %}
-			{% for line in numberedSection["说明书"]["发明内容"] %}
-				{% if line['index']<0 %}
-					<p Italic="0" num="XXXX">{{line['content']}}</p>
-				{% else %}
-				    <p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
-				{% endif %}
-			{% endfor %}
-		{% endif %}
+		{% for line in 专利内容 %}
+			{% if line['index']<0 %}
+				<p Italic="0" num="XXXX">{{line['content']}}</p>
+			{% else %}
+				<p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
+			{% endif %}
+		{% endfor %}
 	</disclosure>
-	{% if "附图说明" in numberedSection["说明书"] %}
+	{% if 附图说明|count >0 %}
 	<description-of-drawings>
 		<heading>附图说明</heading>
-			{% for line in numberedSection["说明书"]["附图说明"] %}
-				{% if line['index']<0 %}
-					<p Italic="0" num="XXXX">{{line['content']}}</p>
-				{% else %}
-				    <p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
-				{% endif %}
-			{% endfor %}
+		{% for line in 附图说明 %}
+			{% if line['index']<0 %}
+				<p Italic="0" num="XXXX">{{line['content']}}</p>
+			{% else %}
+				<p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
+			{% endif %}
+		{% endfor %}
 	</description-of-drawings>
 	{% endif %}
 	<mode-for-invention>
 		<heading>具体实施方式</heading>
-		{% if "具体实施方式" in numberedSection["说明书"] %}
-			{% for line in numberedSection["说明书"]["具体实施方式"] %}
-				{% if line['index']<0 %}
-					<p Italic="0" num="XXXX">{{line['content']}}</p>
-				{% else %}
-				    <p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
-				{% endif %}
-			{% endfor %}
-		{% endif %}
+		{% for line in 具体实施方式 %}
+			{% if line['index']<0 %}
+				<p Italic="0" num="XXXX">{{line['content']}}</p>
+			{% else %}
+				<p Italic="0" num="{{"%04d"%line['index']}}">{{line['content']}}</p>
+			{% endif %}
+		{% endfor %}
 	</mode-for-invention>
 </description>
 </cn-application-body>

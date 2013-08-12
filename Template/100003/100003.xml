@@ -2,7 +2,7 @@
 <!DOCTYPE  cn-application-body SYSTEM "/dtdandxsl/cn-application-body-20080416.dtd">
 <cn-application-body lang="zh" country="CN">
 	<cn-drawings>
-		{% for line in numberedSection["说明书附图"]["root"] %}
+		{% for line in 说明书附图 %}
 			<figure id="f{{line['index']}}" num="{{line['index']}}" figure-labels="图{{line['index']}}">
 				<img id="if{{line['index']}}" file="{{line['content']}}" wi="{{line["width"]}}" he="{{line["height"]}}" img-content="drawing" img-format="{{line['img-format']}}" orientation="portrait" inline="no"/>
 			</figure>	
