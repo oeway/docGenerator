@@ -51,7 +51,6 @@
       <ZHENGMINGYT>
       </ZHENGMINGYT>
     </BAONEIWJXX>
-  {% if "说明书附图" in numberedSection %}
     <BAONEIWJXX>
       <WENJIANBZ>100003.xml</WENJIANBZ>
       <GESHILX>.XML</GESHILX>
@@ -65,7 +64,6 @@
       <ZHENGMINGYT>
       </ZHENGMINGYT>
     </BAONEIWJXX>
-  {% endif %}
     <BAONEIWJXX>
       <WENJIANBZ>100004.xml</WENJIANBZ>
       <GESHILX>.XML</GESHILX>
@@ -79,7 +77,6 @@
       <ZHENGMINGYT>
       </ZHENGMINGYT>
     </BAONEIWJXX>
-    {% if "摘要附图" in numberedSection%}
     <BAONEIWJXX>
       <WENJIANBZ>100005.xml</WENJIANBZ>
       <GESHILX>.XML</GESHILX>
@@ -93,7 +90,6 @@
       <ZHENGMINGYT>
       </ZHENGMINGYT>
     </BAONEIWJXX>
-    {% endif %}
     <BAONEIWJXX>
       <WENJIANBZ>100001.xml</WENJIANBZ>
       <GESHILX>.XML</GESHILX>

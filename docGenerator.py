@@ -17,29 +17,10 @@ import zipfile
 import datetime
 from PIL import Image
 imageWidth = 160
-infoFeild ={
-    '专利类型':'',
-    '专利名称':'',
-    '第一发明人':'',
-    '身份证号码':'',
-    '其他发明人':[],
-    '第一申请人':'',
-    '其他申请人':[],  
-}
-contentDict = {
-    'root':[],
-    '专利申请文件':infoFeild,
-    '说明书摘要':[],
-    '摘要附图':[],
-    '权利要求书':[],
-    '说明书':[],
-    '技术领域':[],
-    '背景技术':[],
-    '专利内容':[],
-    '附图说明':[],
-    '具体实施方式':[],
-    '说明书附图':[]
-}
+patentBigTitle = "专利申请文件V2.0"
+contentDict = {}
+infoFeild ={}
+
 
 instructLst = ['技术领域','背景技术','专利内容','附图说明','具体实施方式']
 
@@ -49,6 +30,45 @@ imageSectionPath = {'说明书附图':'100003',
 imageNameBase = '1308041747'
 
 
+#clear input directory
+filelist=[]
+rootdir="./Input"
+filelist=os.listdir(rootdir)
+for f in filelist:
+    filepath = os.path.join( rootdir, f )
+    if os.path.isfile(filepath):
+        os.remove(filepath)
+        print(filepath+" removed!")
+    elif os.path.isdir(filepath):
+        shutil.rmtree(filepath,True)
+        print("dir "+filepath+" removed!")
+
+def init():
+    global infoFeild,contentDict
+    infoFeild ={
+        '专利类型':'',
+        '专利名称':'',
+        '第一发明人':'',
+        '身份证号码':'',
+        '其他发明人':[],
+        '第一申请人':'',
+        '其他申请人':[],  
+    }
+    contentDict = {
+        'root':[],
+        patentBigTitle:infoFeild,
+        '说明书摘要':[],
+        '摘要附图':[],
+        '权利要求书':[],
+        '说明书':[],
+        '技术领域':[],
+        '背景技术':[],
+        '专利内容':[],
+        '附图说明':[],
+        '具体实施方式':[],
+        '说明书附图':[]
+    }
+    
 def toZip( file, filename):
     zip_file = zipfile.ZipFile(filename, 'w')
     if os.path.isfile(file):
@@ -85,10 +105,13 @@ def addImage(img,sec):
     if os.path.isfile (os.path.join('Output',imageSectionPath[sec],imgName)): print("Copy File Success")
     return imgDict
 
-def generate(inputFile):
-    s = open(inputFile,encoding='utf-8').readlines()
+def generate(inputFileName):
+    global infoFeild,contentDict
+    init()
+    f = open(inputFileName,encoding='utf-8')
     secName = 'root'
-    for line in s:
+    for line in f:
+        print(line)
         if len(line)<100:#maybe its a section title
             maybeTitle = line.replace(' ','').strip()
             if maybeTitle in contentDict:
@@ -100,14 +123,14 @@ def generate(inputFile):
             if len(tmp)>1:
                 if tmp[0] in currentSection:
                     if type(currentSection[tmp[0]]) == type([]): #list
-                        currentSection[tmp[0]].append([tmp[i] for i in range(len(tmp)) if i>0])
+                        currentSection[tmp[0]] = [{'index':i,'content':tmp[i]} for i in range(len(tmp)) if i>0]
                     else:
                         currentSection[tmp[0]] = tmp[1]
                     contentDict[tmp[0]] = currentSection[tmp[0]] # add to main dict
         else: # content
             if line.strip() != "":
                 currentSection.append(line.strip())
-    #print([i+str(len(contentDict[i])) for i in contentDict.keys() if contentDict[i] != []])
+    print([i+str(len(contentDict[i])) for i in contentDict.keys() if contentDict[i] != []])
     #print(contentDict['权利要求书'])
     rights = []
     currentRight = ''
@@ -134,15 +157,6 @@ def generate(inputFile):
         #print(contentDict[sec])    
     da = datetime.date.today()
     contentDict['日期'] = {"年":da.year,"月":da.month,"日":da.day}
-
-    for sec in imageSectionPath:
-        imgLst = []
-        for i,img in enumerate(contentDict[sec]):
-            d = addImage(img,sec)
-            d['index'] = i+1
-            imgLst.append(d)
-        contentDict[sec] = imgLst
-
     #######Make work directory
     try:
         shutil.rmtree("./Output") 
@@ -154,7 +168,14 @@ def generate(inputFile):
         print('Copy template directory failed')
         exit()
 
-
+        
+    for sec in imageSectionPath:
+        imgLst = []
+        for i,img in enumerate(contentDict[sec]):
+            d = addImage(img,sec)
+            d['index'] = i+1
+            imgLst.append(d)
+        contentDict[sec] = imgLst
 
     templateFileList = []
     for dirpath, dirnames, filenames in os.walk('./Output'):
@@ -181,7 +202,7 @@ def generate(inputFile):
 
 
     #######Make Archive
-    filename = contentDict['专利申请文件']['专利名称']+'.zip'
+    filename = 'library\\' + contentDict[patentBigTitle]['专利名称']+'.zip'
     directory = 'Output'
     toZip(directory, filename)
     print('Done!')
